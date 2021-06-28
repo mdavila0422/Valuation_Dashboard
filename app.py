@@ -7,15 +7,21 @@ import dash_core_components as dcc
 import dash_html_components as html
 from urllib.request import urlopen
 import plotly.graph_objects as go
+import plotly.express as px
 from dash.dependencies import Output, Input
 from os import name
 
-# with open('secretkey.txt') as f:
-#     key = f.read()
+with open('secretkey.txt') as f:
+    key = f.read()
 
-# f = FinanceAPI()
-# f.registerKey_(key)
-# apple_dict = f.build_dict('AAPL')
+f = FinanceAPI()
+f.registerKey_(key)
+apple_dict = f.build_dict('AAPL')
+price_df = f.build_price_dataframe('price')
+earnings_df = f.build_price_dataframe('earnings')
+
+earnings_figure = px.scatter(earnings_df, x='date', y=['actualEarningResult', 'estimatedEarning'],  title='Earnings')
+#earnings_figure.add_scatter(earnings_df, y='estimatedEarning')
 
 external_stylesheets = [
     {
@@ -185,12 +191,14 @@ app.layout = html.Div(
                 html.Div(
                     children=dcc.Graph(
                         id='price-chart', config={'displayModeBar': False},
+                        # figure= price_figure
                     ),
                     className='card'
                 ),
                 html.Div(
                     children=dcc.Graph(
                         id='earnings-chart', config={'displayModeBar': False},
+                        figure= earnings_figure
                     ),
                     className='card'
                 ),
@@ -201,32 +209,32 @@ app.layout = html.Div(
     className='main-div'
 )
 
-@app.callback(
-    #define output objects
-    [
-        Output('price-chart', 'figure'),
-        Output('volume-chart', 'figure')
-    ],
-    #define input objects (elem waiting for changes, property of elements)
-    [
-        Input('stock-search', 'value')
-    ]
-)
+# @app.callback(
+#     #define output objects
+#     [
+#         Output('price-chart', 'figure'),
+#         Output('volume-chart', 'figure')
+#     ],
+#     #define input objects (elem waiting for changes, property of elements)
+#     [
+#         Input('stock-search', 'value')
+#     ]
+# )
 
-def request_stock_info():
-    pass
+# def request_stock_info():
+#     pass
 
-@app.callback(
-    #define output objects
-    [
-        Output('price-chart', 'figure'),
-        Output('volume-chart', 'figure')
-    ],
-    #define input objects (elem waiting for changes, property of elements)
-    [
-        Input('stock-search', 'value')
-    ]
-)
+# @app.callback(
+#     #define output objects
+#     [
+#         Output('price-chart', 'figure'),
+#         Output('volume-chart', 'figure')
+#     ],
+#     #define input objects (elem waiting for changes, property of elements)
+#     [
+#         Input('stock-search', 'value')
+#     ]
+# )
 
 def update_dashboard():
     pass

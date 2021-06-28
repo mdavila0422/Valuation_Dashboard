@@ -148,31 +148,21 @@ class FinanceAPI():
         #Symbol
         data_dict["symbol"] = symbol
         #profile data
-        data_dict["profile"] = {}
         for k in self.profile[0].keys():
-            data_dict["profile"][k] = self.profile[0][k]
+            data_dict[k] = self.profile[0][k]
         #financial ratios data
-        data_dict["ratios"] = {}
         for k in self.ratios[0].keys():
-            data_dict['ratios'][k] = self.ratios[0][k]
+            data_dict[k] = self.ratios[0][k]
         #financial growth data
-        data_dict["growth"] = {}
         for k in self.growth[0].keys():
-            data_dict['growth'][k] = self.growth[0][k]
-        #historical price data
-        data_dict["historical_price"] = []
-        for day in self.historical_price['historical']:
-            price_data = {}
-            for k in day.keys():
-                price_data[k] = day[k]
-            data_dict["historical_price"].append(price_data)
-        #earnings data
-        data_dict["earnings"] = []
-        for day in self.earnings:
-            earnings_data = {}
-            for k in day.keys():
-                earnings_data[k] = day[k]
-            data_dict["earnings"].append(earnings_data)
+            data_dict[k] = self.growth[0][k]
+        # #earnings data
+        # data_dict["earnings"] = []
+        # for day in self.earnings:
+        #     earnings_data = {}
+        #     for k in day.keys():
+        #         earnings_data[k] = day[k]
+        #     data_dict["earnings"].append(earnings_data)
 
         return data_dict
 
@@ -215,8 +205,34 @@ class FinanceAPI():
         #Build the dataframe
         self.df = pd.DataFrame(data_companies)
         #Convert to numeric columns wherever applicable
-        self.replace_None()
-        self.cols_numeric()    
+        self.replace_None_()
+        self.cols_numeric_()
+
+        return self.df
+
+    def build_price_dataframe(self, val):
+        """
+        Builds a DataFrame with a given ticker symbol
+        
+        Parameters
+        ----------
+        lst : A list of ticker symbols (str) 
+            e.g. ['MSFT','FB','AAPL','TWTR']
+        Returns
+        -------
+        A Pandas DataFrame with historical price data pulled from the API, 
+        indexed by the symbol (company)
+        """
+        if not self.key_registered:
+            print('API key is not registered yet.')
+            return None
+
+        if val == 'price':
+            self.price_df = pd.DataFrame(self.historical_price['historical'])
+        else:
+            self.earnings_df = pd.DataFrame(self.earnings)
+
+        return self.price_df if val == 'price' else self.earnings_df
 
     def bar_chart(self, var='price', **kwargs):
         plt.figure(figsize=(10,4))
