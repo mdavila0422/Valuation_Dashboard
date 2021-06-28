@@ -1,0 +1,131 @@
+body{
+    font-family: "Lato", sans-serif;
+    margin: 0;
+    background-color: #f7f7f7;
+}
+
+/* .main-div {
+    width: 960px;
+    display: flex-box;
+    justify-content: center;
+} */
+
+.header {
+    background-color: #222222;
+    height: 200px;
+    padding: 16px 0 0 0;
+}
+
+.header-title {
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.header-description {
+    color: #CFCFCF;
+    margin: 4px auto;
+    text-align: center;
+    max-width: 384px;
+}
+
+.menu {
+    height: 82px;
+    width: 912px;
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 12px;
+    margin: -80px auto 0 auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+input {
+    display: inline-block;
+    height: min-content;
+    margin: 5px 10px;
+    padding: 10px;
+}
+
+.Stock-Input {
+    background-color: #fafafa;
+    border:0;
+    box-shadow:0 0 4px rgba(0,0,0,0.3);
+    transition: .3s box-shadow;
+}
+
+.Stock-Input:hover {
+    border: 1px solid #aaa
+}
+
+.button {
+    height: min-content;
+    box-shadow:inset 0px 1px 3px 0px #91b8b3;
+	background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+	background-color:#768d87;
+	border-radius:5px;
+	border:1px solid #566963;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-size:15px;
+	font-weight:bold;
+	padding:11px 23px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px #2b665e;
+}
+
+.button:hover {
+    border-color: #ffffff;
+}
+
+.card {
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+.company-info{
+    position: absolute;
+    left: 20%;
+    height: 80px;
+    width: 600px;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 25px auto;
+    background-color: transparent;
+    /* box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18); */
+}
+
+.price-change {
+    vertical-align: bottom;
+    padding-top: 5px;
+}
+
+.financial-summary {
+    position: absolute;
+    left: 20%;
+    top: 25%;
+    height: 200px;
+    width: 600px;
+    display: flex;
+    justify-content: space-evenly;
+    margin: 25px auto;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.18);
+}
+
+table {
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 250px;
+
+}
+
+table tr {
+    text-align: left;
+    border-bottom: 1px solid #dddddd;
+}
