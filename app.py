@@ -1,7 +1,9 @@
+from pandas.core.algorithms import mode
 from financeapi import *
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from datetime import datetime
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -20,8 +22,85 @@ apple_dict = f.build_dict('AAPL')
 price_df = f.build_price_dataframe('price')
 earnings_df = f.build_price_dataframe('earnings')
 
-earnings_figure = px.scatter(earnings_df, x='date', y=['actualEarningResult', 'estimatedEarning'],  title='Earnings')
-#earnings_figure.add_scatter(earnings_df, y='estimatedEarning')
+price_figure = go.Figure(
+    data=[
+        go.Candlestick(
+            x=price_df['date'],
+            open=price_df['open'],
+            low=price_df['low'],
+            high=price_df['high'],
+            close=price_df['close'],
+        ),
+    ],
+)
+price_figure.update_layout(
+    title='Price Graph',
+    yaxis_title='AAPL Stock',
+    margin=dict(l=25, r=15, b=15, t=70, pad=4),
+    plot_bgcolor='#f7f7f7',
+    hovermode='x unified',
+)
+price_figure.update_xaxes(
+    rangeslider_visible=True,
+    rangeselector=dict(
+        buttons=list([
+            dict(count=1, label="1m", step="month", stepmode="backward"),
+            dict(count=6, label="6m", step="month", stepmode="backward"),
+            dict(count=1, label="YTD", step="year", stepmode="todate"),
+            dict(count=1, label="1y", step="year", stepmode="backward"),
+            dict(step="all")
+        ])
+    )
+)
+price_figure.update_yaxes(tickprefix='$', fixedrange=False)
+earnings_figure = go.Figure()
+earnings_figure.add_trace(
+    go.Scatter(
+        mode='markers',
+        y=earnings_df['actualEarningResult'],
+        x=earnings_df['date'],
+        name='Actual Earning',
+        marker=dict(
+            color='rgba(0, 0, 255, 0.5)',
+            size=30,
+            line=dict(
+                color='DarkSlateGrey',
+                width=2
+            )
+        ),
+    )
+)
+earnings_figure.add_trace(
+    go.Scatter(
+        mode='markers',
+        y=earnings_df['estimatedEarning'],
+        x=earnings_df['date'],
+        name='Est. Earning',
+        marker=dict(
+            color='rgba(11, 156, 49, 0.5)',
+            size=30,
+            line=dict(
+                color='DarkSlateGrey',
+                width=2
+            )
+        ),
+    )
+)
+earnings_figure.update_layout(
+    title='Earnings',
+    margin=dict(l=15, r=15, b=15, t=60, pad=4),
+    legend_title_text='Earnings Value',
+    plot_bgcolor='#f7f7f7',
+    hovermode='x unified'
+)
+# earnings_figure.update_traces(
+#     marker=dict(
+#         size=12,
+#         color=['rgba(0, 0, 255, 0.5)', 'rgba(11, 156, 49, 0.5)'],
+#         line=dict(width=2, color='DarkSlateGrey')
+#     ),
+#     selector=dict(mode='markers')
+# )
 
 external_stylesheets = [
     {
@@ -186,21 +265,22 @@ app.layout = html.Div(
             ],
             className="financial-summary card"
         ),
+        #Price and earnings graphs
         html.Div(
             children=[
                 html.Div(
                     children=dcc.Graph(
                         id='price-chart', config={'displayModeBar': False},
-                        # figure= price_figure
+                        figure= price_figure
                     ),
-                    className='card'
+                    className='graph'
                 ),
                 html.Div(
                     children=dcc.Graph(
                         id='earnings-chart', config={'displayModeBar': False},
                         figure= earnings_figure
                     ),
-                    className='card'
+                    className='graph'
                 ),
             ],
             className='wrapper',
