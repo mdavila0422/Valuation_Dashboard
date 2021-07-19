@@ -147,6 +147,14 @@ table tr {
     border-bottom: 1px solid #dddddd;
 }
 
+.text-red {
+    color: #e74c3c!important;
+}
+
+.text-green {
+    color: #2ecc71!important;
+}
+
 /* #price-graph {
     position: absolute;
     top: 80%;

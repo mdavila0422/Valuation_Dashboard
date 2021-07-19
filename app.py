@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import base64
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -13,6 +14,8 @@ import plotly.express as px
 from dash.dependencies import Output, Input
 from os import name
 
+
+
 with open('secretkey.txt') as f:
     key = f.read()
 
@@ -21,6 +24,10 @@ f.registerKey_(key)
 apple_dict = f.build_dict('AAPL')
 price_df = f.build_price_dataframe('price')
 earnings_df = f.build_price_dataframe('earnings')
+price_sign=''
+
+##logic for Change color positive or negative
+price_sign = 'text-red' if apple_dict['percentChange'] < 0 else 'text-green'
 
 price_figure = go.Figure(
     data=[
@@ -140,13 +147,12 @@ app.layout = html.Div(
         #Company info
         html.Div(
             children=[
-                html.H2(children="🍎",
-                        className='logo'),
-                html.H2(children='Apple Corporation', className='company-name'),
-                html.H2(children='(AAPL)', className='company-ticker'),
-                html.H2(children='$130.76', className='company-price'),
-                html.H3(children='2.70', className='price-change'),
-                html.H3(children='(-1.01%)', className='price-change')
+                html.Img(src=f"{apple_dict['image']}", className='logo'),
+                html.H2(children=f"{apple_dict['companyName']}", className='company-name'),
+                html.H2(children=f"{apple_dict['symbol']}", className='company-ticker'),
+                html.H2(children=f"{apple_dict['price']}", className='company-price'),
+                html.H3(children=f"{apple_dict['changes']}", className=f'price-change {apple_dict["priceSign"]}'),
+                html.H3(children=f"({'{:.2f}%'.format(apple_dict['percentChange']*100)})", className=f'price-change {apple_dict["priceSign"]}')
 
             ],
             className="company-info"
@@ -160,52 +166,45 @@ app.layout = html.Div(
                             children=[
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Symbol', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['symbol']}")
+                                        html.Th(children='Symbol', scope='row'),                                        
+                                        html.Td(children=f"{apple_dict['symbol']}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Price', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        html.Td(children='X.XX%', className='summary-data'),                                        
-                                        #html.Td(children=f"{apple_dict['profile']['price']}")
+                                        html.Th(children='Price', scope='row'),                                        
+                                        #html.Td(children='X.XX%', className='summary-data'),                                        
+                                        html.Td(children=f"{apple_dict['price']}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Beta', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['beta']}")
+                                        html.Th(children='Beta', scope='row'),                                        
+                                        html.Td(children=f"{'{:.3f}'.format(apple_dict['beta'])}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Volume Avg.', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['volAvg']}") 
+                                        html.Th(children='Volume Avg.', scope='row'),                                        
+                                        html.Td(children=f"{'{:,}'.format(apple_dict['volAvg'])}") 
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Market Cap', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['mktCap']}")
+                                        html.Th(children='Market Cap (ms)', scope='row'),                                        
+                                        html.Td(children=f"{'{:,.1f}'.format(apple_dict['mktCap']/1000000)}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Last Dividend', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['lastDiv']}")
+                                        html.Th(children='Last Dividend', scope='row'),                                        
+                                        html.Td(children=f"{apple_dict['lastDiv']}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='52 wk range', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['profile']['range']}")
+                                        html.Th(children='52 wk range', scope='row'),                                        
+                                        html.Td(children=f"{apple_dict['range']}")
                                     ]
                                 ),
                             ]
@@ -218,44 +217,38 @@ app.layout = html.Div(
                             children=[
                                 html.Tr(
                                     children=[
-                                        html.Th(children='ROE', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['returnOnEquity']}")
+                                        html.Th(children='ROE (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}%'.format(apple_dict['returnOnEquityTTM']*100)}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='ROA', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['returnOnAssets']}")
+                                        html.Th(children='ROA (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}%'.format(apple_dict['returnOnAssetsTTM']*100)}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Operating Margin', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['operatingProfitMargin']}")
+                                        html.Th(children='Operating Margin (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}%'.format(apple_dict['operatingProfitMarginTTM']*100)}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='Debt/Equity', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['debtEquityRatio']}")
+                                        html.Th(children='Debt/Equity (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}%'.format(apple_dict['debtEquityRatioTTM']*100)}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='P/E', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['priceEarningsRatio']}")
+                                        html.Th(children='P/E (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}'.format(apple_dict['priceEarningsRatioTTM'])}")
                                     ]
                                 ),
                                 html.Tr(
                                     children=[
-                                        html.Th(children='P/B', scope='row'),
-                                        html.Td(children='data', className='summary-data'),
-                                        #html.Td(children=f"{apple_dict['ratios']['priceToBookRatio']}")
+                                        html.Th(children='P/B (TTM)', scope='row'),                                        
+                                        html.Td(children=f"{'{:.2f}'.format(apple_dict['priceToBookRatioTTM'])}")
                                     ]
                                 ),
                             ]

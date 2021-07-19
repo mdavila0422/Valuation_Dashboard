@@ -164,6 +164,10 @@ class FinanceAPI():
         #         earnings_data[k] = day[k]
         #     data_dict["earnings"].append(earnings_data)
 
+        #Add percent change value to profile data
+        data_dict['percentChange'] = data_dict['changes']/(data_dict['price']-data_dict['changes'])
+        data_dict['priceSign'] = 'text-red' if data_dict['percentChange'] < 0 else 'text-green'
+
         return data_dict
 
     def cols_numeric_(self):
